@@ -1,0 +1,8 @@
+Storage Account Created: 
+ecinsights001
+    Correlation ID: 
+
+Setting up GitHub and VS Code to work with Azure using pesonal access token and issues command below in the terminal window
+
+git remote set-url origin https://github.com/emg0808/Azure-EcommerceInsights.git
+
