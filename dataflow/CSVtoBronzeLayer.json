@@ -20,10 +20,12 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
+				"     fileSystem: 'bronze',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: false) ~> CSVtoBronze"
+				"     columnNamesAsHeader: true,",
+				"     wildcardPaths:['{folder}/']) ~> CSVtoBronze"
 			]
 		}
 	}
