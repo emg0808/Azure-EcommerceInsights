@@ -1,0 +1,9 @@
+{
+	"name": "EcommerceInsightsADF",
+	"location": "westus3",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0cf3fd7f-101d-4eea-a4f1-6b207699d59b",
+		"tenantId": "698283bf-a9d8-42b9-b9f5-c941bd0f8e71"
+	}
+}
