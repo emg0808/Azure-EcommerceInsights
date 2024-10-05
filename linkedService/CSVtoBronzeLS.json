@@ -1,0 +1,12 @@
+{
+	"name": "CSVtoBronzeLS",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://ecinsights001.dfs.core.windows.net/",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDVDOTExRDc1LTM5OEEtNEQxRC1BRUIxLUU1QjQ0NjI0RDcxRV9hZGRmYTI1Ny03Y2Q0LTRjYzUtOGY5NC01ODA1NGM4Y2FlYjgiDQp9"
+		}
+	}
+}
