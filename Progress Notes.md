@@ -11,3 +11,6 @@
 |           |     | 4. **Enriched Layer**: Data is conformed across sources and standardized, ready for further use.                            |
 |           |     | 5. **Curated Layer**: Analytical data models like star schemas, designed for business consumption.                              |
 |           |     | 6. **Semantic Layer**: High-level metrics and calculations for BI tools.                                                       |    
+||||
+|           |     | Downloaded the Brazilian OList and Marketing Funnel data sets in .CSV format from Kagle |
+||                | Data Factory CSV injestion                                                 |
