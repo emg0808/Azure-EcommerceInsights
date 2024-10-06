@@ -1,0 +1,81 @@
+{
+	"name": "01_Raw",
+	"properties": {
+		"description": "Raw CSV Files",
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "Brazil Ecommerce",
+				"container": "01-landing"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "mql_id",
+				"type": "String"
+			},
+			{
+				"name": "seller_id",
+				"type": "String"
+			},
+			{
+				"name": "sdr_id",
+				"type": "String"
+			},
+			{
+				"name": "sr_id",
+				"type": "String"
+			},
+			{
+				"name": "won_date",
+				"type": "String"
+			},
+			{
+				"name": "business_segment",
+				"type": "String"
+			},
+			{
+				"name": "lead_type",
+				"type": "String"
+			},
+			{
+				"name": "lead_behaviour_profile",
+				"type": "String"
+			},
+			{
+				"name": "has_company",
+				"type": "String"
+			},
+			{
+				"name": "has_gtin",
+				"type": "String"
+			},
+			{
+				"name": "average_stock",
+				"type": "String"
+			},
+			{
+				"name": "business_type",
+				"type": "String"
+			},
+			{
+				"name": "declared_product_catalog_size",
+				"type": "String"
+			},
+			{
+				"name": "declared_monthly_revenue",
+				"type": "String"
+			}
+		]
+	}
+}
