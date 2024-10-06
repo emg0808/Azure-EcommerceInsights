@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'CSVtoBronzeLS'"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
 		"CSVtoBronzeLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ecinsights001.dfs.core.windows.net/"
@@ -44,6 +48,9 @@
 					},
 					"CSVtoBronzeLS_accountKey": {
 						"value": "[parameters('CSVtoBronzeLS_accountKey')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
 					},
 					"CSVtoBronzeLS_properties_typeProperties_url": {
 						"value": "[parameters('CSVtoBronzeLS_properties_typeProperties_url')]"

@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'CSVtoBronzeLS'"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
 		"CSVtoBronzeLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ecinsights001.dfs.core.windows.net/"
@@ -20,199 +24,6 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/CSVToBronze')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CSVtoBronzeLayer",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "CSVtoBronzeLayer",
-								"type": "DataFlowReference",
-								"parameters": {
-									"parameter1": {
-										"value": "'@{brazilian}'",
-										"type": "Expression"
-									}
-								},
-								"datasetParameters": {
-									"CSVtoBronze": {},
-									"sink1": {}
-								},
-								"linkedServiceParameters": {
-									"CSVtoBronze": {
-										"linkedService": {
-											"folder": "ecommerce"
-										}
-									}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/CSVtoBronzeLayer')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Transform Dataverse data from CSV to Parquet')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "After using Azure Synapse Link for Dataverse, use this pipeline to transform the CSV files of data to the Parquet format. The transformed files will land in the <Table>/Snapshot directory of the Dataverse container.",
-				"activities": [
-					{
-						"name": "Dataverse CSV to Parquet",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "1.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DataverseToParquet",
-								"type": "DataFlowReference",
-								"parameters": {
-									"ContainerName": "\"Dataverse Container Name\"",
-									"TableName": "\"Dataverse Table Name\""
-								},
-								"datasetParameters": {
-									"ADLS": {},
-									"Parquet": {
-										"ContainerName": "\"Dataverse Container Name\"",
-										"TableName": "\"Dataverse Table Name\""
-									}
-								},
-								"linkedServiceParameters": {
-									"ADLS": {
-										"linkedService": {
-											"folder": "ecommerce"
-										}
-									}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2021-05-27T04:37:55Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DataverseToParquet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Brazilian')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CSVtoBronzeLS",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"folder": "ecommerce"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSVtoBronzeLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Parquet')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Transforms Dataverse data CSV files to Parquet format in lands the new files in the  Table/Snapshot directory.",
-				"linkedServiceName": {
-					"referenceName": "CSVtoBronzeLS",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"folder": "ecommerce"
-					}
-				},
-				"parameters": {
-					"ContainerName": {
-						"type": "string",
-						"defaultValue": "\"Dataverse Container Name\""
-					},
-					"TableName": {
-						"type": "string",
-						"defaultValue": "\"Dataverse Table Name\""
-					}
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@concat(dataset().TableName, '/Snapshot')",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().ContainerName",
-							"type": "Expression"
-						}
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSVtoBronzeLS')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CSVtoBronzeLS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -237,93 +48,202 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CSVtoBronzeLayer')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/CSVtoParquette')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"linkedService": {
-								"referenceName": "CSVtoBronzeLS",
-								"type": "LinkedServiceReference"
+				"activities": [
+					{
+						"name": "Copy CSV Files",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
 							},
-							"name": "CSVtoBronze"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Brazilian",
-								"type": "DatasetReference"
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
 							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"parameters{",
-						"     parameter1 as string",
-						"}",
-						"source(useSchema: false,",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'bronze',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true,",
-						"     wildcardPaths:['{folder}/']) ~> CSVtoBronze",
-						"CSVtoBronze sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
-					]
-				}
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "01_Raw",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSVtoParquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSVtoBronzeLS')]",
-				"[concat(variables('factoryId'), '/datasets/Brazilian')]"
+				"[concat(variables('factoryId'), '/datasets/01_Raw')]",
+				"[concat(variables('factoryId'), '/datasets/CSVtoParquet')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DataverseToParquet')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "MappingDataFlow",
+				"annotations": [],
+				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"sources": [
-						{
-							"linkedService": {
-								"referenceName": "CSVtoBronzeLS",
-								"type": "LinkedServiceReference"
-							},
-							"name": "ADLS"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "Parquet",
-								"type": "DatasetReference"
-							},
-							"name": "Parquet"
-						}
-					],
-					"transformations": [],
-					"script": "parameters{\n\tContainerName as string (\"Dataverse Container Name\"),\n\tTableName as string (\"Dataverse Table Name\")\n}\nsource(output(\n\t\tId as string,\n\t\tSinkCreatedOn as timestamp,\n\t\tSinkModifiedOn as timestamp,\n\t\tstatecode as long,\n\t\tstatuscode as long,\n\t\tpreferredcontactmethodcode as long,\n\t\taccountratingcode as long,\n\t\taddress1_shippingmethodcode as long,\n\t\tbusinesstypecode as long,\n\t\tindustrycode as long,\n\t\tshippingmethodcode as long,\n\t\tpreferredappointmenttimecode as long,\n\t\taddress2_shippingmethodcode as long,\n\t\tterritorycode as long,\n\t\tpreferredappointmentdaycode as long,\n\t\tpaymenttermscode as long,\n\t\taccountclassificationcode as long,\n\t\taddress1_addresstypecode as long,\n\t\townershipcode as long,\n\t\taddress2_freighttermscode as long,\n\t\taddress2_addresstypecode as long,\n\t\taddress1_freighttermscode as long,\n\t\tcustomersizecode as long,\n\t\tcustomertypecode as long,\n\t\taccountcategorycode as long,\n\t\tdonotpostalmail as boolean,\n\t\tmarketingonly as boolean,\n\t\tdonotbulkemail as boolean,\n\t\tdonotbulkpostalmail as boolean,\n\t\tdonotphone as boolean,\n\t\tdonotsendmm as boolean,\n\t\tisprivate as boolean,\n\t\tparticipatesinworkflow as boolean,\n\t\tmerged as boolean,\n\t\tcreditonhold as boolean,\n\t\tdonotfax as boolean,\n\t\tdonotemail as boolean,\n\t\tfollowemail as boolean,\n\t\tmodifiedby as string,\n\t\tmodifiedby_entitytype as string,\n\t\tmodifiedonbehalfby as string,\n\t\tmodifiedonbehalfby_entitytype as string,\n\t\towningbusinessunit as string,\n\t\towningbusinessunit_entitytype as string,\n\t\tcreatedby as string,\n\t\tcreatedby_entitytype as string,\n\t\ttransactioncurrencyid as string,\n\t\ttransactioncurrencyid_entitytype as string,\n\t\tmodifiedbyexternalparty as string,\n\t\tmodifiedbyexternalparty_entitytype as string,\n\t\towninguser as string,\n\t\towninguser_entitytype as string,\n\t\towningteam as string,\n\t\towningteam_entitytype as string,\n\t\tcreatedonbehalfby as string,\n\t\tcreatedonbehalfby_entitytype as string,\n\t\tslainvokedid as string,\n\t\tslainvokedid_entitytype as string,\n\t\tmasterid as string,\n\t\tmasterid_entitytype as string,\n\t\tparentaccountid as string,\n\t\tparentaccountid_entitytype as string,\n\t\tpreferredsystemuserid as string,\n\t\tpreferredsystemuserid_entitytype as string,\n\t\tprimarycontactid as string,\n\t\tprimarycontactid_entitytype as string,\n\t\tslaid as string,\n\t\tslaid_entitytype as string,\n\t\tcreatedbyexternalparty as string,\n\t\tcreatedbyexternalparty_entitytype as string,\n\t\townerid as string,\n\t\townerid_entitytype as string,\n\t\taging90 as decimal(18,2),\n\t\tcreditlimit_base as decimal(18,2),\n\t\taging60_base as decimal(18,2),\n\t\tmarketcap as decimal(18,2),\n\t\trevenue_base as decimal(18,2),\n\t\taging60 as decimal(18,2),\n\t\tmarketcap_base as decimal(18,2),\n\t\trevenue as decimal(18,2),\n\t\taging90_base as decimal(18,2),\n\t\taging30_base as decimal(18,2),\n\t\tcreditlimit as decimal(18,2),\n\t\taging30 as decimal(18,2),\n\t\taddress2_postalcode as string,\n\t\taddress1_longitude as decimal(18,2),\n\t\taddress2_county as string,\n\t\tmasteraccountidname as string,\n\t\taddress1_county as string,\n\t\taddress2_line3 as string,\n\t\taddress2_longitude as decimal(18,2),\n\t\taddress1_telephone2 as string,\n\t\ttransactioncurrencyidname as string,\n\t\taddress1_upszone as string,\n\t\tprocessid as string,\n\t\taddress2_name as string,\n\t\taddress1_stateorprovince as string,\n\t\tmasteraccountidyominame as string,\n\t\temailaddress1 as string,\n\t\towneridyominame as string,\n\t\taddress1_country as string,\n\t\taddress2_upszone as string,\n\t\texchangerate as decimal(18,2),\n\t\taddress1_line2 as string,\n\t\tcreatedbyexternalpartyyominame as string,\n\t\taddress1_city as string,\n\t\taddress1_utcoffset as long,\n\t\taddress2_stateorprovince as string,\n\t\tversionnumber as long,\n\t\tentityimageid as string,\n\t\tmodifiedon as timestamp,\n\t\tcreatedon as timestamp,\n\t\taccountid as string,\n\t\taddress2_utcoffset as long,\n\t\tmodifiedbyyominame as string,\n\t\toverriddencreatedon as timestamp,\n\t\tmodifiedbyname as string,\n\t\tmodifiedonbehalfbyname as string,\n\t\tentityimage_url as string,\n\t\tprimarytwitterid as string,\n\t\taddress2_line2 as string,\n\t\tyominame as string,\n\t\taddress1_latitude as decimal(18,2),\n\t\tprimarysatoriid as string,\n\t\tfax as string,\n\t\ttimezoneruleversionnumber as long,\n\t\tcreatedonbehalfbyyominame as string,\n\t\taddress2_composite as string,\n\t\towneridtype as string,\n\t\taddress1_name as string,\n\t\tparentaccountidname as string,\n\t\ttelephone3 as string,\n\t\tparentaccountidyominame as string,\n\t\tentityimage_timestamp as long,\n\t\tmodifiedbyexternalpartyname as string,\n\t\temailaddress3 as string,\n\t\temailaddress2 as string,\n\t\taddress2_country as string,\n\t\ttelephone2 as string,\n\t\tcreatedbyexternalpartyname as string,\n\t\tlastusedincampaign as timestamp,\n\t\taccountnumber as string,\n\t\ttraversedpath as string,\n\t\tprimarycontactidname as string,\n\t\ttimespentbymeonemailandmeetings as string,\n\t\taddress1_primarycontactname as string,\n\t\tpreferredsystemuseridname as string,\n\t\tcreatedonbehalfbyname as string,\n\t\taddress2_postofficebox as string,\n\t\taddress2_latitude as decimal(18,2),\n\t\tmodifiedbyexternalpartyyominame as string,\n\t\tprimarycontactidyominame as string,\n\t\tslaname as string,\n\t\taddress1_composite as string,\n\t\tftpsiteurl as string,\n\t\tsic as string,\n\t\taddress2_line1 as string,\n\t\tlastonholdtime as timestamp,\n\t\taddress1_telephone1 as string,\n\t\taddress2_fax as string,\n\t\taddress1_telephone3 as string,\n\t\tdescription as string,\n\t\tstageid as string,\n\t\ttelephone1 as string,\n\t\twebsiteurl as string,\n\t\tutcconversiontimezonecode as long,\n\t\tstockexchange as string,\n\t\taddress1_addressid as string,\n\t\taddress2_city as string,\n\t\taddress2_primarycontactname as string,\n\t\taddress2_addressid as string,\n\t\tonholdtime as long,\n\t\taddress1_line1 as string,\n\t\taddress1_line3 as string,\n\t\tcreatedbyyominame as string,\n\t\taddress2_telephone1 as string,\n\t\taddress2_telephone2 as string,\n\t\taddress2_telephone3 as string,\n\t\taddress1_postofficebox as string,\n\t\tcreatedbyname as string,\n\t\ttickersymbol as string,\n\t\tnumberofemployees as long,\n\t\towneridname as string,\n\t\tmodifiedonbehalfbyyominame as string,\n\t\taddress1_fax as string,\n\t\timportsequencenumber as long,\n\t\tname as string,\n\t\tslainvokedidname as string,\n\t\tpreferredsystemuseridyominame as string,\n\t\tsharesoutstanding as long,\n\t\taddress1_postalcode as string,\n\t\towningbusinessunitname as string\n\t),\n\tuseSchema: false,\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tentity: ($TableName),\n\tformat: 'cdm',\n\tmanifestType: 'model',\n\tfolderPath: '',\n\tfileSystem: ($ContainerName)) ~> ADLS\nADLS sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Parquet"
+					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
 				}
 			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/01_Raw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Raw CSV Files",
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Brazil Ecommerce",
+						"container": "01-landing"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "mql_id",
+						"type": "String"
+					},
+					{
+						"name": "seller_id",
+						"type": "String"
+					},
+					{
+						"name": "sdr_id",
+						"type": "String"
+					},
+					{
+						"name": "sr_id",
+						"type": "String"
+					},
+					{
+						"name": "won_date",
+						"type": "String"
+					},
+					{
+						"name": "business_segment",
+						"type": "String"
+					},
+					{
+						"name": "lead_type",
+						"type": "String"
+					},
+					{
+						"name": "lead_behaviour_profile",
+						"type": "String"
+					},
+					{
+						"name": "has_company",
+						"type": "String"
+					},
+					{
+						"name": "has_gtin",
+						"type": "String"
+					},
+					{
+						"name": "average_stock",
+						"type": "String"
+					},
+					{
+						"name": "business_type",
+						"type": "String"
+					},
+					{
+						"name": "declared_product_catalog_size",
+						"type": "String"
+					},
+					{
+						"name": "declared_monthly_revenue",
+						"type": "String"
+					}
+				]
+			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CSVtoBronzeLS')]",
-				"[concat(variables('factoryId'), '/datasets/Parquet')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CSVtoParquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "02-raw"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		}
 	]

@@ -8,6 +8,9 @@
 		"CSVtoBronzeLS_accountKey": {
 			"value": ""
 		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
 		"CSVtoBronzeLS_properties_typeProperties_url": {
 			"value": "https://ecinsights001.dfs.core.windows.net/"
 		},
