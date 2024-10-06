@@ -7,13 +7,21 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "EcommerceInsightsADF"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
 		"CSVtoBronzeLS_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'CSVtoBronzeLS'"
 		},
-		"AzureBlobStorage1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://ecinsights001.dfs.core.windows.net/"
 		},
 		"CSVtoBronzeLS_properties_typeProperties_url": {
 			"type": "string",
@@ -46,11 +54,17 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"AzureDataLakeStorage1_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					},
 					"CSVtoBronzeLS_accountKey": {
 						"value": "[parameters('CSVtoBronzeLS_accountKey')]"
 					},
-					"AzureBlobStorage1_connectionString": {
-						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
 					},
 					"CSVtoBronzeLS_properties_typeProperties_url": {
 						"value": "[parameters('CSVtoBronzeLS_properties_typeProperties_url')]"

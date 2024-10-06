@@ -5,11 +5,17 @@
 		"factoryName": {
 			"value": "EcommerceInsightsADF"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
 		"CSVtoBronzeLS_accountKey": {
 			"value": ""
 		},
-		"AzureBlobStorage1_connectionString": {
-			"value": ""
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://ecinsights001.dfs.core.windows.net/"
 		},
 		"CSVtoBronzeLS_properties_typeProperties_url": {
 			"value": "https://ecinsights001.dfs.core.windows.net/"
