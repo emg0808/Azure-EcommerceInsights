@@ -11,7 +11,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "Brazil Ecommerce",
+				"folderPath": "Brazil Ecommerce/olistData",
 				"container": "01-landing"
 			},
 			"columnDelimiter": ",",
