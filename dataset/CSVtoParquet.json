@@ -1,0 +1,19 @@
+{
+	"name": "CSVtoParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "02-raw"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
